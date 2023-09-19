@@ -1,0 +1,147 @@
+stages:
+  - build
+  - test
+  - sonaranalysis
+  - sonarscan
+  - docker
+  - deploy
+  - trivy-scan
+  
+# Define common steps for preparing the environment
+#before_script:
+  
+ 
+
+# Build stage: Install dependencies 
+build:
+  stage: build
+  image: python:3.9
+  tags:
+    - Runner-1
+
+  script:
+  - python3 -m venv venv
+  - source venv/bin/activate  
+  - pip install -r requirements.txt
+
+# Test stage: Run tests with a database service
+test:
+  stage: test
+  image: python:3.9
+  tags:
+    - Runner-1
+
+  script:
+    - python3 -m venv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
+    - python3 manage.py makemigrations
+    - python3 manage.py migrate  
+    
+    - python3 manage.py test
+
+
+# SonarQube stage: Analyze code and send results to SonarCloud server
+sonaranalysis:
+  stage: sonaranalysis
+  image: 
+    name: python:3.9
+  tags:
+    - Runner-1
+  
+  script:
+    - python3 -m venv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
+    - python3 manage.py makemigrations
+    - python3 manage.py migrate  
+
+    - pip install coverage 
+    - coverage run manage.py test       # Run tests with coverage 
+    - coverage xml -i -o $CI_PROJECT_DIR/coverage.xml    # Generate the coverage report
+
+    
+# Add this section to save the coverage.xml as an artifact
+  artifacts:
+    paths:
+      - coverage.xml
+
+# Sonar
+sonarscan:
+  stage: sonarscan
+  image: 
+    name: sonarsource/sonar-scanner-cli:latest
+  tags:
+    - Runner-1
+
+  variables:
+            SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+
+
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - .sonar/cache  
+
+  script:
+    - cd $CI_PROJECT_DIR
+    - sonar-scanner -Dsonar.projectBaseDir=$CI_PROJECT_DIR -Dsonar.config.location=$CI_PROJECT_DIR/sonar-project.properties
+    
+
+  only:
+    - master
+    
+  allow_failure: true  # If SonarQube scan fails, continue the pipeline
+
+
+
+#To run docker-compose file
+dockerizaration:
+  stage: docker
+  image: docker:latest
+  tags:
+    - Runner-1
+  services:
+   - name: docker:dind
+     
+  script:
+   
+    - docker rm -f db djangoapp
+    - docker-compose up -d     
+
+# To build the image and push it on JFrog server 
+deploy:
+  stage: deploy
+  image: docker:latest
+  tags:
+    - Runner-3
+  script:
+    
+    
+    - docker build -t 172.27.59.80:8082/gitlabci-pythonapp-shreya/python-djangoapp:latest .
+    - docker login -u $JFROG_USER -p $JFROG_PASSWORD http://172.27.59.80:8082/
+    - docker push  172.27.59.80:8082/gitlabci-pythonapp-shreya/python-djangoapp:latest   
+
+
+# To scan the image for detecting different vulnerabilities
+trivy-scan:
+  stage: trivy-scan
+  image: 
+   name: docker:stable
+   entrypoint: [""]
+  tags:
+    - Runner-3
+  
+
+  script:
+     - trivy image -f json -o trivy-report.html --severity HIGH,MEDIUM 172.27.59.80:8082/gitlabci-pythonapp-shreya/python-djangoapp:latest
+     
+ 
+# Add this section to save the trivy-report.html as an artifact
+  artifacts:
+    paths:
+      - trivy-report.html
+  
+
+               
+  
