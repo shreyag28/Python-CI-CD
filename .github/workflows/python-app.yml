@@ -3,7 +3,7 @@ name: Python Build and Test
 on:
   push:
     branches:
-      - main  # Customize this to your main branch
+      - master  # Customize this to your main branch
 
 jobs:
   build-and-test:
