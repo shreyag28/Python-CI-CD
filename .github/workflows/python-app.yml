@@ -28,7 +28,9 @@ jobs:
       run: pip install -r requirements.txt  # Adjust this based on your project setup
 
     - name: Install distutils
-      run: python -m ensurepip && python -m pip install distutils
+      run: |
+         pip install --upgrade pip
+         python -m ensurepip && python -m pip install distutils
 
     - name: Run tests
       run: |
