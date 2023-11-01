@@ -27,11 +27,7 @@ jobs:
     - name: Install dependencies
       run: pip install -r requirements.txt  # Adjust this based on your project setup
 
-    - name: Install distutils
-      run: |
-         pip install --upgrade pip
-         python -m ensurepip && python -m pip install distutils
 
-    - name: Run tests
-      run: |
-        python -m unittest discover -s djangoapp/  # Replace with your test command
+    - name: Test with pytest
+      run: | 
+        pytest
