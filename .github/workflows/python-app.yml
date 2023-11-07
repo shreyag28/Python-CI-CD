@@ -43,7 +43,7 @@ jobs:
        "componentId": "ari:cloud:compass:50eeb54a-bd4a-467a-ae53-532574431702:component/5ec6ba4f-632a-4bd6-81bc-2c0ce8b035bf/742a514b-0798-4bc2-9ca8-a2477fc37f48",
        "metricDefinitionId": "ari:cloud:compass::metric-definition/builtin/build-success-rate",
        "externalMetricSourceId": "github-actions",
-       "successRate": 0.95  // Modify this to reflect your actual success rate
+       "successRate": 95%  // Modify this to reflect your actual success rate
        }' \
        https://cybagejanshreya.atlassian.net/compass/metric/predefined/build-success-rate
       env:
