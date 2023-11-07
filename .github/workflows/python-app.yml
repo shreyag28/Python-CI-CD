@@ -45,7 +45,7 @@ jobs:
        "externalMetricSourceId": "github-actions",
        "successRate": 0.95  // Modify this to reflect your actual success rate
        }' \
-       https://compass-api-url.com/metrics
+       https://cybagejanshreya.atlassian.net/compass/metric/predefined/build-success-rate
       env:
        COMPASS_API_TOKEN: ATATT3xFfGF0nkx2lLNloesDaKq13c62XzyTcRb8anrUa66Z_q7vzlarj1Ij4K33Qwf9fdpWMHaLO1WQQkDgyZ7mbLkeKdaeESWa_l2Z1AbR9Qz7kClC6yFkMl6TtOr2ydAT9SM8iYnGO9ivu25XYputergaakxFjcAjFRyqitlYFZlzpbHLPgU=58967857
 
