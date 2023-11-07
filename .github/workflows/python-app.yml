@@ -35,4 +35,18 @@ jobs:
         python3 manage.py makemigrations
         python3 manage.py migrate  
         python3 manage.py test
+
+    - name: Send Success Rate to Compass
+      run: |
+       curl -X POST -H "Authorization: Bearer $COMPASS_API_TOKEN" -H "Content-Type: application/json" \
+       -d '{
+       "componentId": "ari:cloud:compass:50eeb54a-bd4a-467a-ae53-532574431702:component/5ec6ba4f-632a-4bd6-81bc-2c0ce8b035bf/742a514b-0798-4bc2-9ca8-a2477fc37f48",
+       "metricDefinitionId": "ari:cloud:compass::metric-definition/builtin/build-success-rate",
+       "externalMetricSourceId": "github-actions",
+       "successRate": 0.95  // Modify this to reflect your actual success rate
+       }' \
+       https://compass-api-url.com/metrics
+      env:
+       COMPASS_API_TOKEN: ATATT3xFfGF0nkx2lLNloesDaKq13c62XzyTcRb8anrUa66Z_q7vzlarj1Ij4K33Qwf9fdpWMHaLO1WQQkDgyZ7mbLkeKdaeESWa_l2Z1AbR9Qz7kClC6yFkMl6TtOr2ydAT9SM8iYnGO9ivu25XYputergaakxFjcAjFRyqitlYFZlzpbHLPgU=58967857
+
         
